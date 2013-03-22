@@ -178,16 +178,19 @@ public class FennecLauncher extends LaunchConfigDelegate {
         // get the launch controller singleton
         AndroidLaunchController controller = AndroidLaunchController.getInstance();
 
-        // Copy the moz-generated package. /fennec/App.apk should be symlinked
+        // Copy the moz-generated package. fennec/App.apk should be symlinked
         // to the objdir apk.
         // XXX: make this location configurable
-        IFile file = project.getFile("/fennec/App.apk");
-        IPath dest = getApplicationPackage(project);
+        IFile file = project.getFile("fennec/App.apk");
+        IFile dest = getApplicationPackage(project);
         if (dest == null) {
             androidLaunch.stopLaunch();
             return;
         }
-        file.copy(dest, true, null);
+        if (dest.exists()) {
+            dest.delete(true, null);
+        }
+        file.copy(dest.getFullPath(), true, null);
 
         // get the application package
         IFile applicationPackage = ProjectHelper.getApplicationPackage(project);
@@ -262,7 +265,7 @@ public class FennecLauncher extends LaunchConfigDelegate {
      * @param project The project
      * @return The android package as an IFile object or null if not found.
      */
-    private static IPath getApplicationPackage(IProject project) {
+    private static IFile getApplicationPackage(IProject project) {
         // get the output folder
         IFolder outputLocation = BaseProjectHelper.getAndroidOutputFolder(project);
 
@@ -270,13 +273,12 @@ public class FennecLauncher extends LaunchConfigDelegate {
             AdtPlugin.printErrorToConsole(project,
                     "Failed to get the output location of the project. Check build path properties"
                     );
-            AdtPlugin.displayError("BRN", "FAIL");
             return null;
         }
 
 
         // get the package path
         String packageName = project.getName() + SdkConstants.DOT_ANDROID_PACKAGE;
-        return outputLocation.getFullPath().append(packageName);
+        return project.getFile(outputLocation.getProjectRelativePath().append(packageName));
     }
 }
