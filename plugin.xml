@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-    
-    <extension point="org.eclipse.debug.core.launchDelegates">
-      <launchDelegate
-       id="org.mozilla.ide.eclipse.fennec.FennecLauncher"
-       delegate="org.mozilla.ide.eclipse.fennec.FennecLauncher"
-       type="com.android.ide.eclipse.adt.debug.LaunchConfigType"
-       modes="run, debug">
-      </launchDelegate>
-    </extension>
-
+  <extension point="org.eclipse.debug.core.launchDelegates">
+    <launchDelegate
+     id="org.mozilla.ide.eclipse.fennec.FennecLauncher"
+     delegate="org.mozilla.ide.eclipse.fennec.FennecLauncher"
+     type="com.android.ide.eclipse.adt.debug.LaunchConfigType"
+     modes="run, debug">
+    </launchDelegate>
+  </extension>
 </plugin>
