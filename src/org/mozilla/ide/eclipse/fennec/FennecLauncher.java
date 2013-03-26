@@ -29,7 +29,6 @@ import com.android.ide.eclipse.adt.internal.launch.AndroidLaunchConfiguration;
 import com.android.ide.eclipse.adt.internal.launch.AndroidLaunchController;
 import com.android.ide.eclipse.adt.internal.launch.LaunchConfigDelegate;
 import com.android.ide.eclipse.adt.internal.project.AndroidManifestHelper;
-import com.android.ide.eclipse.adt.internal.project.ApkInstallManager;
 import com.android.ide.eclipse.adt.internal.project.BaseProjectHelper;
 import com.android.ide.eclipse.adt.internal.project.ProjectHelper;
 
@@ -214,9 +213,6 @@ public class FennecLauncher extends LaunchConfigDelegate {
             androidLaunch.stopLaunch();
             return;
         }
-
-        // force the new apk to be installed
-        ApkInstallManager.getInstance().resetInstallationFor(project);
 
         doLaunch(configuration, mode, monitor, project, androidLaunch, config, controller,
                 applicationPackage, manifestData);
