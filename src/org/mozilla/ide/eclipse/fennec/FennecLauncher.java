@@ -18,6 +18,7 @@ package org.mozilla.ide.eclipse.fennec;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ide.common.xml.ManifestData;
@@ -104,10 +105,12 @@ public class FennecLauncher extends LaunchConfigDelegate {
         project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
 
         // Force a full build using the moz make/packager
+        HashMap<String, String> args = new HashMap<String, String>();
+        args.put("force", "true");
         project.build(IncrementalProjectBuilder.FULL_BUILD,
-                      FennecMakeBuilder.ID, null, monitor);
+                      FennecMakeBuilder.ID, args, monitor);
         project.build(IncrementalProjectBuilder.FULL_BUILD,
-                      FennecPackageBuilder.ID, null, monitor);
+                      FennecPackageBuilder.ID, args, monitor);
 
         // because the post compiler builder does a delayed refresh due to
         // library not picking the refresh up if it's done during the build,

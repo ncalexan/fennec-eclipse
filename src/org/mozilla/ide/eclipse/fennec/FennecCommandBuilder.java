@@ -43,15 +43,13 @@ public abstract class FennecCommandBuilder extends BaseBuilder {
 
         IProject project = getProject();
 
-        if (kind != FULL_BUILD) {
-            if (!mNeedsBuild) {
-                // If a watched resource changed, mark the project as build
-                // needed. The next time a full build occurs, the moz
-                // make/package will execute.
-                IResourceDelta delta = getDelta(project);
-                if (delta == null || watchedResourceChanged(delta)) {
-                    mNeedsBuild = true;
-                }
+        // only do a build when triggered by the launcher
+        if (kind != FULL_BUILD || args == null || !args.containsKey("force")) {
+            // If a watched resource changed, mark the project as build
+            // needed. The next time a full build occurs, the moz
+            // make/package will execute.
+            if (!mNeedsBuild && watchedResourceChanged(project)) {
+                mNeedsBuild = true;
             }
             return null;
         }
@@ -120,7 +118,12 @@ public abstract class FennecCommandBuilder extends BaseBuilder {
         return pref;
     }
 
-    private boolean watchedResourceChanged(IResourceDelta delta) {
+    private boolean watchedResourceChanged(IProject project) {
+        IResourceDelta delta = getDelta(project);
+        if (delta == null) {
+            return true;
+        }
+
         IResourceDelta[] children = delta.getAffectedChildren();
         for (IResourceDelta child : children) {
             if (sWatchedResources.contains(child.getResource().getName())) {
