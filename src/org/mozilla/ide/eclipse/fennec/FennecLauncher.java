@@ -35,6 +35,7 @@ import com.android.ide.eclipse.adt.internal.project.ProjectHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -110,6 +111,12 @@ public class FennecLauncher extends LaunchConfigDelegate {
                       FennecMakeBuilder.ID, null, monitor);
         project.build(IncrementalProjectBuilder.FULL_BUILD,
                       FennecPackageBuilder.ID, null, monitor);
+
+        // because the post compiler builder does a delayed refresh due to
+        // library not picking the refresh up if it's done during the build,
+        // we want to force a refresh here as this call is generally asking for
+        // a build to use the apk right after the call.
+        project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
         // check if the project has errors, and abort in this case.
         if (ProjectHelper.hasError(project, true)) {
