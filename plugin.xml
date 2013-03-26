@@ -4,7 +4,9 @@
   <extension point="org.eclipse.debug.core.launchDelegates">
     <launchDelegate
        id="org.mozilla.ide.eclipse.fennec.FennecLauncher"
+       delegateName="Fennec Launcher"
        delegate="org.mozilla.ide.eclipse.fennec.FennecLauncher"
+       delegateDescription="The Fennec Launcher enables launching and debugging Fennec projects."
        type="com.android.ide.eclipse.adt.debug.LaunchConfigType"
        modes="run, debug">
     </launchDelegate>

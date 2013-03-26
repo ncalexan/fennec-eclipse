@@ -19,7 +19,6 @@ package org.mozilla.ide.eclipse.fennec;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import com.android.SdkConstants;
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ide.common.xml.ManifestData;
 import com.android.ide.eclipse.adt.AdtConstants;
@@ -29,11 +28,9 @@ import com.android.ide.eclipse.adt.internal.launch.AndroidLaunchConfiguration;
 import com.android.ide.eclipse.adt.internal.launch.AndroidLaunchController;
 import com.android.ide.eclipse.adt.internal.launch.LaunchConfigDelegate;
 import com.android.ide.eclipse.adt.internal.project.AndroidManifestHelper;
-import com.android.ide.eclipse.adt.internal.project.BaseProjectHelper;
 import com.android.ide.eclipse.adt.internal.project.ProjectHelper;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -191,20 +188,6 @@ public class FennecLauncher extends LaunchConfigDelegate {
         // get the launch controller singleton
         AndroidLaunchController controller = AndroidLaunchController.getInstance();
 
-        // Copy the moz-generated package. fennec/App.apk should be symlinked
-        // to the objdir apk.
-        // XXX: make this location configurable
-        IFile file = project.getFile("fennec/App.apk");
-        IFile dest = getApplicationPackage(project);
-        if (dest == null) {
-            androidLaunch.stopLaunch();
-            return;
-        }
-        if (dest.exists()) {
-            dest.delete(true, null);
-        }
-        file.copy(dest.getFullPath(), true, null);
-
         // get the application package
         IFile applicationPackage = ProjectHelper.getApplicationPackage(project);
         if (applicationPackage == null) {
@@ -270,28 +253,5 @@ public class FennecLauncher extends LaunchConfigDelegate {
         }
 
         return true;
-    }
-    
-    /**
-     * Returns the android package file as an IFile object for the specified
-     * project.
-     * @param project The project
-     * @return The android package as an IFile object or null if not found.
-     */
-    private static IFile getApplicationPackage(IProject project) {
-        // get the output folder
-        IFolder outputLocation = BaseProjectHelper.getAndroidOutputFolder(project);
-
-        if (outputLocation == null) {
-            AdtPlugin.printErrorToConsole(project,
-                    "Failed to get the output location of the project. Check build path properties"
-                    );
-            return null;
-        }
-
-
-        // get the package path
-        String packageName = project.getName() + SdkConstants.DOT_ANDROID_PACKAGE;
-        return project.getFile(outputLocation.getProjectRelativePath().append(packageName));
     }
 }
