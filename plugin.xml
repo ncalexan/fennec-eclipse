@@ -16,9 +16,7 @@
       name="Fennec Make Builder"
       point="org.eclipse.core.resources.builders">
     <builder>
-      <run class="org.mozilla.ide.eclipse.fennec.FennecMakeBuilder">
-        <parameter name="path" value="path to objdir base" />
-      </run>
+      <run class="org.mozilla.ide.eclipse.fennec.FennecMakeBuilder" />
     </builder>
   </extension>
   <extension
@@ -26,23 +24,21 @@
       name="Fennec Package Builder"
       point="org.eclipse.core.resources.builders">
     <builder>
-      <run class="org.mozilla.ide.eclipse.fennec.FennecPackageBuilder">
-        <parameter name="path" value="path to objdir base" />
-      </run>
+      <run class="org.mozilla.ide.eclipse.fennec.FennecPackageBuilder" />
     </builder>
   </extension>
   <extension
       id="org.mozilla.ide.eclipse.fennec.MakeProblemMarker"
-      point="org.eclipse.core.resources.markers">
-      <super type="org.eclipse.core.resources.problemmarker"/>
-      <attribute name="myAttribute" />
-      <persistent value="true" />
+      point="org.eclipse.core.resources.markers"
+      name="Fennec Make Problems">
+    <super type="org.eclipse.core.resources.problemmarker"/>
+    <persistent value="false" />
   </extension>
   <extension
       id="org.mozilla.ide.eclipse.fennec.PackageProblemMarker"
-      point="org.eclipse.core.resources.markers">
-      <super type="org.eclipse.core.resources.problemmarker"/>
-      <attribute name="myAttribute" />
-      <persistent value="true" />
+      point="org.eclipse.core.resources.markers"
+      name="Fennec Build Problems">
+    <super type="org.eclipse.core.resources.problemmarker"/>
+    <persistent value="false" />
   </extension>
 </plugin>
