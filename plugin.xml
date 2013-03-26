@@ -3,10 +3,44 @@
 <plugin>
   <extension point="org.eclipse.debug.core.launchDelegates">
     <launchDelegate
-     id="org.mozilla.ide.eclipse.fennec.FennecLauncher"
-     delegate="org.mozilla.ide.eclipse.fennec.FennecLauncher"
-     type="com.android.ide.eclipse.adt.debug.LaunchConfigType"
-     modes="run, debug">
+       id="org.mozilla.ide.eclipse.fennec.FennecLauncher"
+       delegate="org.mozilla.ide.eclipse.fennec.FennecLauncher"
+       type="com.android.ide.eclipse.adt.debug.LaunchConfigType"
+       modes="run, debug">
     </launchDelegate>
+  </extension>
+  <extension
+      id="org.mozilla.ide.eclipse.fennec.FennecMakeBuilder"
+      name="Fennec Make Builder"
+      point="org.eclipse.core.resources.builders">
+    <builder>
+      <run class="org.mozilla.ide.eclipse.fennec.FennecMakeBuilder">
+        <parameter name="path" value="path to objdir base" />
+      </run>
+    </builder>
+  </extension>
+  <extension
+      id="org.mozilla.ide.eclipse.fennec.FennecPackageBuilder"
+      name="Fennec Package Builder"
+      point="org.eclipse.core.resources.builders">
+    <builder>
+      <run class="org.mozilla.ide.eclipse.fennec.FennecPackageBuilder">
+        <parameter name="path" value="path to objdir base" />
+      </run>
+    </builder>
+  </extension>
+  <extension
+      id="org.mozilla.ide.eclipse.fennec.MakeProblemMarker"
+      point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <attribute name="myAttribute" />
+      <persistent value="true" />
+  </extension>
+  <extension
+      id="org.mozilla.ide.eclipse.fennec.PackageProblemMarker"
+      point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <attribute name="myAttribute" />
+      <persistent value="true" />
   </extension>
 </plugin>

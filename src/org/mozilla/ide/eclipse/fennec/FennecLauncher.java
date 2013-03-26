@@ -29,6 +29,7 @@ import com.android.ide.eclipse.adt.internal.launch.AndroidLaunchConfiguration;
 import com.android.ide.eclipse.adt.internal.launch.AndroidLaunchController;
 import com.android.ide.eclipse.adt.internal.launch.LaunchConfigDelegate;
 import com.android.ide.eclipse.adt.internal.project.AndroidManifestHelper;
+import com.android.ide.eclipse.adt.internal.project.ApkInstallManager;
 import com.android.ide.eclipse.adt.internal.project.BaseProjectHelper;
 import com.android.ide.eclipse.adt.internal.project.ProjectHelper;
 
@@ -36,6 +37,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -101,8 +103,14 @@ public class FennecLauncher extends LaunchConfigDelegate {
             return;
         }
 
-        // disabled for Fennec - can we do our own incremental build?
-        //ProjectHelper.doFullIncrementalDebugBuild(project, monitor);
+        // Do an incremental build to pick up all the deltas
+        project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+
+        // Force a full build using the moz make/packager
+        project.build(IncrementalProjectBuilder.FULL_BUILD,
+                      FennecMakeBuilder.ID, null, monitor);
+        project.build(IncrementalProjectBuilder.FULL_BUILD,
+                      FennecPackageBuilder.ID, null, monitor);
 
         // check if the project has errors, and abort in this case.
         if (ProjectHelper.hasError(project, true)) {
@@ -206,6 +214,9 @@ public class FennecLauncher extends LaunchConfigDelegate {
             androidLaunch.stopLaunch();
             return;
         }
+
+        // force the new apk to be installed
+        ApkInstallManager.getInstance().resetInstallationFor(project);
 
         doLaunch(configuration, mode, monitor, project, androidLaunch, config, controller,
                 applicationPackage, manifestData);
