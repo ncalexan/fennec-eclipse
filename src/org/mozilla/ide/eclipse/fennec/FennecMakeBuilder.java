@@ -1,5 +1,7 @@
 package org.mozilla.ide.eclipse.fennec;
 
+import java.io.File;
+
 import org.eclipse.core.runtime.CoreException;
 
 public class FennecMakeBuilder extends FennecCommandBuilder {
@@ -9,7 +11,8 @@ public class FennecMakeBuilder extends FennecCommandBuilder {
     @Override
     protected String[] getCommands() throws CoreException {
         // XXX: make "make" location generic
-        return new String[] {"/usr/bin/make", "-C", getObjDir()};
+        File baseDir = new File(getObjDir(), "mobile/android/base");
+        return new String[] {"/usr/bin/make", "-C", baseDir.getPath()};
     }
 
     @Override

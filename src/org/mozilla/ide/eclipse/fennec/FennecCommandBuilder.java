@@ -2,7 +2,6 @@ package org.mozilla.ide.eclipse.fennec;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import org.eclipse.core.resources.IMarker;
@@ -27,15 +26,13 @@ public abstract class FennecCommandBuilder extends BaseBuilder {
     protected abstract String getMarkerId();
 
     private static final LinkedList<String> sWatchedResources = new LinkedList<String>();
+    private boolean mNeedsBuild = true;
 
     static {
         sWatchedResources.add("AndroidManifest.xml");
         sWatchedResources.add("res");
         sWatchedResources.add("src");
     }
-
-    // XXX: will each project have its own builder (i.e., is this set necessary?)
-    private HashSet<IProject> mUnbuiltProjects = new HashSet<IProject>();
 
     @Override
     protected IProject[] build(
@@ -45,22 +42,21 @@ public abstract class FennecCommandBuilder extends BaseBuilder {
             throws CoreException {
 
         IProject project = getProject();
-        boolean needsBuild = mUnbuiltProjects.contains(project);
 
         if (kind != FULL_BUILD) {
-            if (!needsBuild) {
+            if (!mNeedsBuild) {
                 // If a watched resource changed, mark the project as build
                 // needed. The next time a full build occurs, the moz
                 // make/package will execute.
                 IResourceDelta delta = getDelta(project);
                 if (delta == null || watchedResourceChanged(delta)) {
-                    mUnbuiltProjects.add(project);
+                    mNeedsBuild = true;
                 }
             }
             return null;
         }
 
-        if (!needsBuild) {
+        if (!mNeedsBuild) {
             // no changes; do nothing
             return null;
         }
@@ -108,7 +104,7 @@ public abstract class FennecCommandBuilder extends BaseBuilder {
 
     protected void postBuild() throws CoreException {
         // build completed successfully
-        mUnbuiltProjects.remove(getProject());
+        mNeedsBuild = false;
     }
 
     protected String getObjDir() throws CoreException {
