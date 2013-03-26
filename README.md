@@ -1,13 +1,13 @@
 # FennecADT
 
+This plugin enables Fennec (Firefox for Android) to be built using Eclipse.
+
 ## Installation
-* Import FennecADT into Eclipse
+Unfortunately, there are currently no build scripts that automate the creation
+of FennecADT's jar, so you'll need to manually package the plugin using
+Eclipse:
+* Import the FennecADT project into Eclipse
+  * File > Import... > Existing Projects into Workspace
 * Right click the project and choose Export > Deployable plug-ins and fragments
-* Save the plugin to your eclipse/dropins directory
+* Save the plugin to your \<eclipse-application-dir\>/dropins directory
 * Restart Eclipse
-
-## How to use
-
-* Manually symlink your <objdir>/dist/fennec APK to <fennec-eclipse-dir>/fennec/App.apk
-* Click Run App (or Debug App)
-* Select FennecADT
