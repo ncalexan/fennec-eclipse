@@ -16,10 +16,12 @@
 
 package org.mozilla.ide.eclipse.fennec;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
+import com.android.SdkConstants;
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ide.common.xml.ManifestData;
 import com.android.ide.eclipse.adt.AdtConstants;
@@ -29,9 +31,11 @@ import com.android.ide.eclipse.adt.internal.launch.AndroidLaunchConfiguration;
 import com.android.ide.eclipse.adt.internal.launch.AndroidLaunchController;
 import com.android.ide.eclipse.adt.internal.launch.LaunchConfigDelegate;
 import com.android.ide.eclipse.adt.internal.project.AndroidManifestHelper;
+import com.android.ide.eclipse.adt.internal.project.BaseProjectHelper;
 import com.android.ide.eclipse.adt.internal.project.ProjectHelper;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -48,8 +52,6 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
  * Implementation of an eclipse LaunchConfigurationDelegate to launch android
  * application in debug.
  */
-// XXX: only use this launcher if project is fennec project (create project XML
-// config entry?)
 @SuppressWarnings("restriction")
 public class FennecLauncher extends LaunchConfigDelegate {
     
@@ -104,9 +106,18 @@ public class FennecLauncher extends LaunchConfigDelegate {
         // Do an incremental build to pick up all the deltas
         project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
 
-        // Force a full build using the moz make/packager
+        // if the apk doesn't exist, force a build even if no changes were detected
+        File packageFile = getApplicationPackage(project);
+        if (packageFile == null) {
+            AdtPlugin.printErrorToConsole("Could not determine APK destination.");
+            androidLaunch.stopLaunch();
+        }
+        String type = packageFile.exists() ?
+                FennecCommandBuilder.TYPE_NORMAL : FennecCommandBuilder.TYPE_FORCE;
+
+        // do a build using moz make/package
         HashMap<String, String> args = new HashMap<String, String>();
-        args.put("force", "true");
+        args.put(FennecCommandBuilder.KEY_TYPE, type);
         project.build(IncrementalProjectBuilder.FULL_BUILD,
                       FennecMakeBuilder.ID, args, monitor);
         project.build(IncrementalProjectBuilder.FULL_BUILD,
@@ -179,7 +190,6 @@ public class FennecLauncher extends LaunchConfigDelegate {
         }
 
         // since adb is working, we let the user know
-        // TODO have a verbose mode for launch with more info (or some of the less useful info we now have).
         AdtPlugin.printToConsole(project, "adb is running normally.");
 
         // make a config class
@@ -209,6 +219,28 @@ public class FennecLauncher extends LaunchConfigDelegate {
 
         doLaunch(configuration, mode, monitor, project, androidLaunch, config, controller,
                 applicationPackage, manifestData);
+    }
+
+    /**
+     * Returns the android package file as an IFile object for the specified
+     * project.
+     * @param project The project
+     * @return The android package as an IFile object or null if not found.
+     */
+    public static File getApplicationPackage(IProject project) {
+        // get the output folder
+        IFolder outputLocation = BaseProjectHelper.getAndroidOutputFolder(project);
+
+        if (outputLocation == null) {
+            AdtPlugin.printErrorToConsole(project,
+                    "Failed to get the output location of the project. Check build path properties");
+            return null;
+        }
+
+
+        // get the package path
+        String packageName = project.getName() + SdkConstants.DOT_ANDROID_PACKAGE;
+        return outputLocation.getRawLocation().append(packageName).toFile();
     }
 
     /**

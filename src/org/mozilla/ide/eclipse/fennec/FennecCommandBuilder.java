@@ -22,6 +22,10 @@ import com.android.ide.eclipse.adt.internal.project.ProjectHelper;
 
 @SuppressWarnings("restriction")
 public abstract class FennecCommandBuilder extends BaseBuilder {
+    public static String KEY_TYPE = "type";
+    public static String TYPE_NORMAL = "normal";
+    public static String TYPE_FORCE = "force";
+
     protected abstract String[] getCommands() throws CoreException;
     protected abstract String getMarkerId();
 
@@ -44,7 +48,8 @@ public abstract class FennecCommandBuilder extends BaseBuilder {
         IProject project = getProject();
 
         // only do a build when triggered by the launcher
-        if (kind != FULL_BUILD || args == null || !args.containsKey("force")) {
+        String type = (String) ((args == null) ? null : args.get(KEY_TYPE));
+        if (kind != FULL_BUILD || type == null) {
             // If a watched resource changed, mark the project as build
             // needed. The next time a full build occurs, the moz
             // make/package will execute.
@@ -54,7 +59,7 @@ public abstract class FennecCommandBuilder extends BaseBuilder {
             return null;
         }
 
-        if (!mNeedsBuild) {
+        if (!mNeedsBuild && !type.equals(TYPE_FORCE)) {
             // no changes; do nothing
             return null;
         }
