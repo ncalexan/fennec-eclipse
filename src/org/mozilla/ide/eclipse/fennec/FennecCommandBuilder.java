@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -42,8 +45,13 @@ public abstract class FennecCommandBuilder extends BaseBuilder {
     protected IProject[] build(
             int kind,
             @SuppressWarnings("rawtypes") Map args,
-            IProgressMonitor monitor)
+            final IProgressMonitor monitor)
             throws CoreException {
+
+        if (monitor.isCanceled()) {
+            throw new CoreException(new Status(Status.CANCEL, FennecActivator.PLUGIN_ID,
+                    "Build interrupted!"));
+        }
 
         IProject project = getProject();
 
@@ -76,9 +84,23 @@ public abstract class FennecCommandBuilder extends BaseBuilder {
         AdtPlugin.getDefault().getAndroidConsole().clearConsole();
 
         monitor.beginTask("Building", 10);
+        Timer cancelCheckTimer = null;
 
         try {
-            Process proc = Runtime.getRuntime().exec(getCommands());
+            final Process proc = Runtime.getRuntime().exec(getCommands());
+
+            TimerTask cancelTimerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    if (monitor.isCanceled()) {
+                        proc.destroy();
+                    }
+                }
+            };
+
+            cancelCheckTimer = new Timer(true);
+            cancelCheckTimer.scheduleAtFixedRate(cancelTimerTask, 0, 1000);
+
             ArrayList<String> err = new ArrayList<String>();
             int returnCode = grabProcessOutput(proc, err);
             if (returnCode != 0) {
@@ -91,13 +113,22 @@ public abstract class FennecCommandBuilder extends BaseBuilder {
             }
             monitor.worked(10);
         } catch (IOException | InterruptedException | CoreException e) {
-            IMarker marker = project.createMarker(getMarkerId());
-            marker.setAttribute(IMarker.MESSAGE, e.getMessage());
-            marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-            throw new CoreException(new Status(Status.ERROR, FennecActivator.PLUGIN_ID,
-                    e.getMessage(), e));
+            if (monitor.isCanceled()) {
+                AdtPlugin.printErrorToConsole(getProject(), "Build interrupted!");
+                throw new CoreException(new Status(Status.CANCEL, FennecActivator.PLUGIN_ID,
+                        e.getMessage(), e));
+            } else {
+                IMarker marker = project.createMarker(getMarkerId());
+                marker.setAttribute(IMarker.MESSAGE, e.getMessage());
+                marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+                throw new CoreException(new Status(Status.ERROR, FennecActivator.PLUGIN_ID,
+                        e.getMessage(), e));
+            }
         } finally {
             monitor.done();
+            if (cancelCheckTimer != null) {
+                cancelCheckTimer.cancel();
+            }
         }
 
         postBuild();
