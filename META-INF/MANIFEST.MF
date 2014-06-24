@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: FennecADT
 Bundle-SymbolicName: org.mozilla.ide.eclipse.fennec;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1.qualifier
 Bundle-ActivationPolicy: lazy
 Import-Package: com.android,
  com.android.ddmlib,

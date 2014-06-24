@@ -2,7 +2,7 @@
 <feature
       id="org.mozilla.ide.eclipse.fennec"
       label="Fennec Make Build Plugin"
-      version="1.0.0.qualifier"
+      version="1.0.1"
       provider-name="Mozilla">
 
    <description url="https://github.com/ncalexan/fennec-eclipse">
