@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-  <extension point="org.eclipse.debug.core.launchDelegates">
-    <launchDelegate
-       id="org.mozilla.ide.eclipse.fennec.FennecLauncher"
-       delegateName="Fennec Launcher"
-       delegate="org.mozilla.ide.eclipse.fennec.FennecLauncher"
-       delegateDescription="The Fennec Launcher enables launching and debugging Fennec projects."
-       type="com.android.ide.eclipse.adt.debug.LaunchConfigType"
-       modes="run, debug">
-    </launchDelegate>
-  </extension>
   <extension
       id="org.mozilla.ide.eclipse.fennec.FennecMakeBuilder"
       name="Fennec Make Builder"
@@ -20,24 +10,9 @@
     </builder>
   </extension>
   <extension
-      id="org.mozilla.ide.eclipse.fennec.FennecPackageBuilder"
-      name="Fennec Package Builder"
-      point="org.eclipse.core.resources.builders">
-    <builder>
-      <run class="org.mozilla.ide.eclipse.fennec.FennecPackageBuilder" />
-    </builder>
-  </extension>
-  <extension
       id="org.mozilla.ide.eclipse.fennec.MakeProblemMarker"
       point="org.eclipse.core.resources.markers"
       name="Fennec Make Problems">
-    <super type="org.eclipse.core.resources.problemmarker"/>
-    <persistent value="false" />
-  </extension>
-  <extension
-      id="org.mozilla.ide.eclipse.fennec.PackageProblemMarker"
-      point="org.eclipse.core.resources.markers"
-      name="Fennec Build Problems">
     <super type="org.eclipse.core.resources.problemmarker"/>
     <persistent value="false" />
   </extension>
