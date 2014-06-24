@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/FennecFeature_0.1.0.jar" id="FennecFeature" version="0.1">
+      <category name="FennecCategory"/>
+   </feature>
+   <category-def name="FennecCategory" label="Fennec Category"/>
+</site>

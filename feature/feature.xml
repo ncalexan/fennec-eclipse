@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="FennecFeature"
+      label="FennecFeature"
+      version="0.1"
+      provider-name="org.mozilla">
+
+   <description url="https://github.com/ncalexan/fennec-eclipse">
+      A plugin that helps build Fennec (Firefox for Android) with Eclipse.
+   </description>
+
+   <license url="http://www.mozilla.org/MPL/2.0/">
+      This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+   </license>
+
+   <requires>
+      <import plugin="com.android.ide.eclipse.adt"/>
+      <import plugin="org.eclipse.equinox.preferences" version="3.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="com.android.ide.eclipse.base"/>
+      <import plugin="com.android.ide.eclipse.ddms"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.debug.core"/>
+      <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="org.eclipse.jdt.launching"/>
+      <import plugin="org.eclipse.ui.console"/>
+      <import plugin="org.eclipse.ui.workbench"/>
+   </requires>
+
+   <plugin
+         id="org.mozilla.ide.eclipse.fennec"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
