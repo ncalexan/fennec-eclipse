@@ -16,7 +16,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
    </license>
 
    <url>
-      <update label="Fennec Eclipse Plugins" url="http://people.mozilla.org/~nalexander/eclipse/"/>
+      <update label="Fennec Eclipse Plugins" url="http://people.mozilla.org/~nalexander/eclipse/update-site/"/>
    </url>
 
    <requires>
