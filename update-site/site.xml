@@ -3,7 +3,7 @@
    <description name="Fennec Eclipse Plugins" url="http://people.mozilla.org/~nalexander/eclipse/">
       Eclipse plugin that help build Fennec (Firefox for Android).
    </description>
-   <feature url="features/org.mozilla.ide.eclipse.fennec_0.2.0.jar" id="org.mozilla.ide.eclipse.fennec" version="0.2">
+   <feature url="features/org.mozilla.ide.eclipse.fennec_1.0.0.201406240915.jar" id="org.mozilla.ide.eclipse.fennec" version="1.0.0.201406240915">
       <category name="org.mozilla.ide.eclipse.fennec"/>
    </feature>
    <category-def name="org.mozilla.ide.eclipse.fennec" label="Fennec Eclipse plugins">
